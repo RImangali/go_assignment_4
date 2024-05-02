@@ -1,5 +1,8 @@
-// user.proto
 syntax = "proto3";
+
+package user;
+
+option go_package = "github.com/RImangali/go_assignment_4/user";
 
 message User {
     int32 id = 1;
@@ -7,13 +10,14 @@ message User {
     string email = 3;
 }
 
-service UserService {
-    rpc AddUser(User) returns (int32);
-    rpc GetUser(int32) returns (User);
-    rpc ListUsers(Empty) returns (stream User);
+message UserID {
+    int32 id = 1;
 }
 
 message Empty {}
-message UserID {
-    int32 id = 1;
+
+service UserService {
+    rpc AddUser(User) returns (UserID);
+    rpc GetUser(UserID) returns (User);
+    rpc ListUsers(Empty) returns (stream User);
 }
