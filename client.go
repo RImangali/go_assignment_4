@@ -6,7 +6,7 @@ import (
 
     "google.golang.org/grpc"
 
-    pb "github.com/go_assignment_4"
+    pb "go_assignment_4/user"
 )
 
 func main() {
@@ -15,6 +15,7 @@ func main() {
         log.Fatalf("did not connect: %v", err)
     }
     defer conn.Close()
+    
     c := pb.NewUserServiceClient(conn)
 
     // AddUser

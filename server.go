@@ -2,50 +2,46 @@ package main
 
 import (
     "context"
-    "log"
-    "net"
+	"fmt"
+	"log"
+	"net"
+    
+	"google.golang.org/grpc"
 
-    "google.golang.org/grpc"
-
-    pb "github.com/go_assignment_4"
+	pb "go_assignment_4/user"
 )
 
-type server struct {
-    users []*pb.User
+type userService struct {
+	pb.UnimplementedUserServiceServer
 }
 
-func (s *server) AddUser(ctx context.Context, user *pb.User) (*pb.UserID, error) {
-    s.users = append(s.users, user)
-    return &pb.UserID{Id: user.Id}, nil
+func (s *userService) AddUser(ctx context.Context, user *pb.User) (*pb.UserID, error) {
+
+	return &pb.UserID{Id: 1}, nil
 }
 
-func (s *server) GetUser(ctx context.Context, userID *pb.UserID) (*pb.User, error) {
-    for _, user := range s.users {
-        if user.Id == userID.Id {
-            return user, nil
-        }
-    }
-    return nil, grpc.Errorf(grpc.Code(grpc.NotFound), "User not found")
+func (s *userService) GetUser(ctx context.Context, userID *pb.UserID) (*pb.User, error) {
+	return &pb.User{Id: userID.Id, Name: "John Doe", Email: "john.doe@example.com"}, nil
 }
 
-func (s *server) ListUsers(empty *pb.Empty, stream pb.UserService_ListUsersServer) error {
-    for _, user := range s.users {
-        if err := stream.Send(user); err != nil {
-            return err
-        }
-    }
-    return nil
+func (s *userService) ListUsers(ctx context.Context, empty *pb.Empty) (*pb.UserList, error) {
+
+	users := []*pb.User{
+		{Id: 1, Name: "John Doe", Email: "john.doe@example.com"},
+		{Id: 2, Name: "Jane Smith", Email: "jane.smith@example.com"},
+	}
+	return &pb.UserList{Users: users}, nil
 }
 
 func main() {
-    lis, err := net.Listen("tcp", ":50051")
-    if err != nil {
-        log.Fatalf("failed to listen: %v", err)
-    }
-    s := grpc.NewServer()
-    pb.RegisterUserServiceServer(s, &server{})
-    log.Println("Server started listening on port :50051")
-    if err := s.Serve(lis); err != nil {
-        log.Fatalf("failed to serve: %v", err)
-    }
+	lis, err := net.Listen("tcp", ":50051")
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+	s := grpc.NewServer()
+	pb.RegisterUserServiceServer(s, &userService{})
+	fmt.Println("gRPC server is running on port 50051...")
+	if err := s.Serve(lis); err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
 }
