@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package user;
 
-option go_package = "github.com/RImangali/go_assignment_4/user";
+option go_package = "user";
 
 message User {
     int32 id = 1;
