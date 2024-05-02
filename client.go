@@ -17,7 +17,7 @@ func main() {
     defer conn.Close()
     c := pb.NewUserServiceClient(conn)
 
-    // AddUser example
+    // AddUser
     addUserResponse, err := c.AddUser(context.Background(), &pb.User{
         Id:    1,
         Name:  "Rakhatuly Imangali",
@@ -28,14 +28,14 @@ func main() {
     }
     log.Printf("User added with ID: %d", addUserResponse.Id)
 
-    // GetUser example
+    // GetUser
     getUserResponse, err := c.GetUser(context.Background(), &pb.UserID{Id: 1})
     if err != nil {
         log.Fatalf("GetUser failed: %v", err)
     }
     log.Printf("User retrieved: %+v", getUserResponse)
 
-    // ListUsers example
+    // ListUsers
     stream, err := c.ListUsers(context.Background(), &pb.Empty{})
     if err != nil {
         log.Fatalf("ListUsers failed: %v", err)
